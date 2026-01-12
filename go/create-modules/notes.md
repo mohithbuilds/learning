@@ -28,3 +28,16 @@ Things I noticed when writing this example:
 3. Errors are treated as values rather than a exception based pattern with `try/catch`
   - Why?
     - This design emphasizes clarity and ensures that devs are conscious of every point where a failure can occur.
+
+### Go Slice
+  - A slice is like an array, except its size changes dynamically as we add and remove items. (similar to python lists)
+  - When declaring a slice, you omit the size in the brackets like this: `[]string`
+    - tells Go that the size of the array underlying the slice can be changed
+    - If there was a number in the brackets `[]` then it would be an array and it's size cannot be changed once declared since **it's part of the type**.
+  - A slice is just a descriptor pointing to a backing array
+    - so this also means that slices are passed by **reference** (only the descriptor is copied)
+    - an array is passed by **value** (entire copy of actual array is made)
+  - Under the hood, a slice is represented as a struct with 3 parts:
+    1. **Pointer `array`**: the memory address of the first element in the underlying array that the slice can access
+    2. **Length `len`**: the number of elements currently visible in the slice
+    3. **Capacity `cap`**: the max number of elements the underlying array can hold before having to reallocate memory

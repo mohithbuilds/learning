@@ -16,12 +16,12 @@ func main() {
 
 	// SUCCESSFUL FLOW
 	// Get a greeting message and print it
-	message, _ := greetings.Hello("Mohith")
-	// had err in place of _
+	message, err := greetings.Hello("Mohith")
+	// had _ in place of err since we know no error
 	fmt.Println(message)
-	// if err != nil {
-	// log.Fatal(err)
-	// }
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// FAIL FLOW
 	mess, e := greetings.Hello("")
