@@ -79,3 +79,10 @@ Things I noticed when writing this example:
   - Maps are not safe for concurrent use: not defined what happens when you read and write to them simultaneously
   - When iterating over a map with a range loop, the iteration order is not specified and is not gauranteed to be the same from one iteration to the next.
     - If you need a stable iteration order then you must maintain a separate data structure that specifies the order
+
+## Testing
+  - Implement test functions in the same package as the code you're testing
+  - Test functions have the form __Test*Name*__, where *Name* says something about the specific test
+  - Test functions take a pointer to the testing package's `testing.T type` as a parameter.
+    - You use this parameter's methods for reporting and logging from your test.
+  - I also ran into something unrelated with regex and noticed something overall, look at `` vs ''
