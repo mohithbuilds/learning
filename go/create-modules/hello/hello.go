@@ -15,13 +15,16 @@ func main() {
 	log.SetFlags(0)
 
 	// SUCCESSFUL FLOW
-	// Get a greeting message and print it
-	message, err := greetings.Hello("Mohith")
+	// A slice of names
+	names := []string{"Mohith", "Turing", "Dijkstra"}
+
+	// Request greeting messages for the names
+	messages, err := greetings.Hellos(names)
 	// had _ in place of err since we know no error
-	fmt.Println(message)
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println(messages)
 
 	// FAIL FLOW
 	mess, e := greetings.Hello("")
