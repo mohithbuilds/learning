@@ -44,6 +44,21 @@ func booksByAuthor(name string) ([]Book, error) {
 	return books, nil
 }
 
+// bookByID queries for the album with the specified ID
+func bookByID(id int64) (Book, error) {
+	// A book to hold data from the returned row
+	var bk Book
+
+	row := db.QueryRow("SELECT * FROM book WHERE id = $1", id)
+	if err := row.Scan(&bk.ID, &bk.Title, &bk.Artist, &bk.Price); err != nil {
+		if err == sql.ErrNoRows {
+			return bk, fmt.Errorf("bookbyId %d: no such book", id)
+		}
+		return bk, fmt.Errorf("bookByID %d: %v", id, err)
+	}
+	return bk, nil
+}
+
 func main() {
 	var err error
 	var cfg *pgx.ConnConfig
@@ -74,4 +89,10 @@ func main() {
 		log.Fatalf("Failed to fetch: %v\n", err)
 	}
 	fmt.Printf("Books found: %v\n", books)
+
+	if book, err := bookByID(4); err != nil {
+		log.Fatalf("Failed to fetch: %v\n", err)
+	} else {
+		fmt.Printf("Book found: %v\n", book)
+	}
 }
