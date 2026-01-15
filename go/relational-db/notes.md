@@ -50,6 +50,13 @@ In short:
 - In Go, when you pass a variable to a function, it's typically **passed by value**.
   - This means the function receives a **copy** of the variable's value. If the function modifies that copy, the original variable outside the function remains unchanged.
 - The `&` operator is the **address of operator**. When we write `&bk.ID`, we are getting the **memory address** of the `bk.ID` field. This memory address is a pointer.
+  - So in our code we are actually changing the original copies.
+
+## Idiomatic Go Prefers Explicitness
+
+Go culture values code that is clear, readable, and has no hidden surprises. If a piece of code feels too "magical," it might be a sign that it's not a robust solution.
+- The Principle: It's better to explicitly ask for what you want than to rely on an implicit, secondary function to get it.
+- Our Takeaway: Instead of performing an action and then asking a separate question ("What was the ID you just created?"), the more idiomatic pattern was to make the request part of the action itself ("Perform this action and return the ID to me"). This makes the flow of data visible and a single, atomic operation.
 
 ## Miscellaneous
 Something nice I noticed is that in the `go.mod` for any modules that get added due to being a required by the main module that we tried to get it automatically adds a `// Indirect` comment which is nice for tracking.

@@ -15,7 +15,7 @@ var db *sql.DB
 type Book struct {
 	ID     int64
 	Title  string
-	Artist string
+	Author string
 	Price  float32
 }
 
@@ -33,7 +33,7 @@ func booksByAuthor(name string) ([]Book, error) {
 	// Loop through rows, using Scan to assign/map column data to the struct fields
 	for rows.Next() {
 		var bk Book
-		if err := rows.Scan(&bk.ID, &bk.Title, &bk.Artist, &bk.Price); err != nil {
+		if err := rows.Scan(&bk.ID, &bk.Title, &bk.Author, &bk.Price); err != nil {
 			return nil, fmt.Errorf("booksByAuthor %q: %v", name, err)
 		}
 		books = append(books, bk)
@@ -50,13 +50,30 @@ func bookByID(id int64) (Book, error) {
 	var bk Book
 
 	row := db.QueryRow("SELECT * FROM book WHERE id = $1", id)
-	if err := row.Scan(&bk.ID, &bk.Title, &bk.Artist, &bk.Price); err != nil {
+	if err := row.Scan(&bk.ID, &bk.Title, &bk.Author, &bk.Price); err != nil {
 		if err == sql.ErrNoRows {
 			return bk, fmt.Errorf("bookbyId %d: no such book", id)
 		}
 		return bk, fmt.Errorf("bookByID %d: %v", id, err)
 	}
 	return bk, nil
+}
+
+// addBook adds the specified book to the database returns the book ID of the
+// new entry
+func addBook(bk Book) (int64, error) {
+	var id int64
+
+	err := db.QueryRow(
+		"INSERT INTO book (title, author, price) VALUES ($1, $2, $3) RETURNING id",
+		bk.Title,
+		bk.Author,
+		bk.Price,
+	).Scan(&id)
+	if err != nil {
+		return 0, fmt.Errorf("addBook %v: %v", bk, err)
+	}
+	return id, nil
 }
 
 func main() {
@@ -84,7 +101,7 @@ func main() {
 	}
 	fmt.Println("Connected!")
 
-	books, err := booksByAuthor("Martin Kleppmann")
+	books, err := booksByAuthor("Uncle Bob")
 	if err != nil {
 		log.Fatalf("Failed to fetch: %v\n", err)
 	}
@@ -95,4 +112,21 @@ func main() {
 	} else {
 		fmt.Printf("Book found: %v\n", book)
 	}
+
+	if bkId, err := addBook(Book{
+		Title:  "Functional Design: Principles, Patterns, and Practices",
+		Author: "Uncle Bob",
+		Price:  49.99,
+	}); err != nil {
+		log.Fatalf("Failed to add book: %v\n", err)
+	} else {
+		fmt.Printf("Book added to index: %v\n", bkId)
+	}
+
+	bks, err := booksByAuthor("Uncle Bob")
+	if err != nil {
+		log.Fatalf("Failed to fetch: %v\n", err)
+	}
+	fmt.Printf("Books found: %v\n", bks)
+
 }
